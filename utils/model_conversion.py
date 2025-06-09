@@ -115,5 +115,5 @@ if __name__ == "__main__":
     model_2d = models.densenet121(pretrained=True)
     model_2d.classifier = nn.Identity()
     model_3d = convert_densenet121(model_2d)
-    torch.save(model_3d, os.environ["STORE_LOCATION"]+"model.pth")
+    torch.save(model_3d, os.environ.get("STORE_LOCATION")+"model_3d.pth")
     
