@@ -15,6 +15,7 @@ from typing import Tuple, Optional
 
 # Third-party imports
 import nibabel as nib
+import torch
 import numpy as np
 from scipy import ndimage as ndi
 from scipy.ndimage import distance_transform_edt
@@ -85,6 +86,51 @@ def watershed_segmentation(volume_3d: np.ndarray,
     
     return labels
 
+def create_tensor(labels: np.ndarray, name: str = None) -> torch.Tensor:
+    """
+    
+    Create a 3D tensor that contains RGB color information for labels.
+
+    Args:
+        
+        labels (np.ndarray): Segmentation result
+
+    Returns:
+        torch.Tensor: 3D tensor with shape [channels, slices, height, width]
+
+    """
+    
+    # Color coding: background (white), tibia (green), femur (red)
+    color_map = {
+        0: [128, 128, 128],  # background
+        1: [0, 255, 0],      # tibia
+        2: [255, 0, 0],      # femur
+    }
+
+    # Create an empty array to store color information
+    volume_rgb = np.zeros((*labels.shape, 3), dtype=np.uint8)
+
+    if name == "tibia":
+        volume_rgb[labels == 1] = color_map[1]
+    
+    elif name == "femur":
+        volume_rgb[labels == 2] = color_map[2]
+
+    elif name == "background":
+        volume_rgb[labels == 0] = color_map[0]
+
+    else:
+        for label_val, color in color_map.items():
+            volume_rgb[labels == label_val] = color
+
+    # Normalize the values between 0. and 1.
+    volume_rgb = volume_rgb.astype(np.float32) / 255.0
+
+    # Create and reshape a tensor
+    tensor_3d = torch.from_numpy(volume_rgb).permute(3, 2, 0, 1)
+
+    return tensor_3d
+
 
 def load_medical_volume(file_path: str) -> Tuple[np.ndarray, np.ndarray]:
     """
@@ -137,6 +183,11 @@ def main() -> None:
         # Perform watershed segmentation
         print("Performing watershed segmentation...")
         labels = watershed_segmentation(volume_3d)
+
+        # Create a PyTorch Tensor object
+        print("Creating and saving a Tensor...")
+        tensor_3d = create_tensor(labels)
+        torch.save(tensor_3d, os.environ.get("STORE_LOCATION")+"tensor_3d.pth")
 
         # Display results
         num_segments = np.max(labels)
