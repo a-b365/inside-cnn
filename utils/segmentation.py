@@ -86,7 +86,7 @@ def watershed_segmentation(volume_3d: np.ndarray,
     
     return labels
 
-def create_tensor(labels: np.ndarray, name: str = None) -> torch.Tensor:
+def create_tensor(bg_mask:np.ndarray, labels: np.ndarray, name: str = None) -> torch.Tensor:
     """
     
     Create a 3D tensor that contains RGB color information for labels.
@@ -117,11 +117,12 @@ def create_tensor(labels: np.ndarray, name: str = None) -> torch.Tensor:
         volume_rgb[labels == 2] = color_map[2]
 
     elif name == "background":
-        volume_rgb[labels == 0] = color_map[0]
+        volume_rgb[bg_mask == 128] = color_map[0]
 
     else:
-        for label_val, color in color_map.items():
-            volume_rgb[labels == label_val] = color
+        volume_rgb[bg_mask == 128] = color_map[0]
+        volume_rgb[labels == 1] = color_map[1]
+        volume_rgb[labels == 2] = color_map[2]
 
     # Normalize the values between 0. and 1.
     volume_rgb = volume_rgb.astype(np.float32) / 255.0
@@ -134,7 +135,7 @@ def create_tensor(labels: np.ndarray, name: str = None) -> torch.Tensor:
 
 def load_medical_volume(file_path: str) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Load medical imaging volume from NIfTI file.
+    Load bone mask volume from NIfTI file.
     
     Args:
         file_path (str): Path to the .nii or .nii.gz file
@@ -166,13 +167,21 @@ def main() -> None:
     then visualizes the results.
     """
     try:
-        # Get mask data path from environment variable
-        mask_path = os.environ.get("MASK_DATA_PATH")
+        # Get bone mask data path from environment variable
+        mask_path = os.environ.get("DATASET_PATH")+"3702_left_knee_bone_mask.nii.gz"
         if not mask_path:
-            raise ValueError("MASK_DATA_PATH environment variable not set")
+            raise ValueError("DATASET_PATH environment variable not set")
         
-        # Load medical volume
+        # Load bone mask volume
         mask_data, _ = load_medical_volume(mask_path)
+
+        # Get background mask data path from environment variable
+        bg_path = os.environ.get("DATASET_PATH")+"3702_left_knee_bg_mask.nii.gz"
+        if not bg_path:
+            raise ValueError("DATASET_PATH environment variable not set")
+        
+        # Load background mask volume
+        bg_mask, _ = load_medical_volume(bg_path)
         
         # Stack 2D slices into 3D volume if needed
         if mask_data.ndim == 2:
@@ -186,8 +195,8 @@ def main() -> None:
 
         # Create a PyTorch Tensor object
         print("Creating and saving a Tensor...")
-        tensor_3d = create_tensor(labels)
-        torch.save(tensor_3d, os.environ.get("STORE_LOCATION")+"tensor_3d.pth")
+        tensor_3d = create_tensor(bg_mask, labels, "background")
+        torch.save(tensor_3d, os.environ.get("STORE_LOCATION")+"background_3d.pth")
 
         # Display results
         num_segments = np.max(labels)
