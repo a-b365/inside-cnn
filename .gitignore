@@ -4,5 +4,8 @@
 # .pth files
 *.pth
 
+# .gz files
+*.gz
+
 # __pycache__
 __pycache__
