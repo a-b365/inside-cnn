@@ -3,15 +3,3 @@
 
 # __pycache__
 __pycache__
-
-# datasets
-datasets
-
-# nii files
-*.gz
-
-# results
-results
-
-# .pth files
-*.pth
