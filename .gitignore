@@ -1,5 +1,8 @@
 # virtual environment
 .venv
 
+# .pth files
+*.pth
+
 # __pycache__
 __pycache__
