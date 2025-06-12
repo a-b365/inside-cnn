@@ -1,9 +1,6 @@
 # virtual environment
 .venv
 
-# .pth files
-*.pth
-
 # __pycache__
 __pycache__
 
@@ -12,6 +9,9 @@ datasets
 
 # nii files
 *.gz
+
+# results
+results
 
 # .pth files
 *.pth
