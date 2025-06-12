@@ -3,3 +3,12 @@
 
 # __pycache__
 __pycache__
+
+# datasets
+datasets
+
+# nii files
+*.gz
+
+# .pth files
+*.pth
