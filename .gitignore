@@ -10,8 +10,5 @@ datasets
 # nii files
 *.gz
 
-# results
-results
-
 # .pth files
 *.pth
