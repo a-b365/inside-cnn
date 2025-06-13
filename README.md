@@ -2,23 +2,23 @@
 
 ## Overview
 
-This project implements a comprehensive pipeline for 3D knee CT image segmentation to identify and analyze three key anatomical regions (tibia, femur, and background) using a modified DenseNet121 architecture followed by cosine similarity analysis.
+This project implements a pipeline for 3D knee CT scan segmentation with modified DenseNet121 architecture to identify and compare major anatomical regions (tibia, femur, and background).
 
 ---
 
 ## Key Features
 
-- **Segmentation**: Semi-automated mask generation of knee CT scan and colorful splitting
+- **Segmentation**: Semi-automated knee CT scan mask generation and colorful splitting
 - **Model Conversion**: Adaptation of 2D pretrained DenseNet121 for 3D volumetric data
-- **Feature Extraction**: Feature extraction from final few convolutional layers
-- **Similarity Analysis**: Cosine similarity computation between anatomical regions
+- **Feature Extraction**: Extracting features from the last few convolutional layers
+- **Similarity Analysis**: Calculating the cosine similarity between anatomical regions
 
 ---
 
 ## Technical Approach
 
 **Core Methods:**
-- Semi-automated 3D mask preparation with color-coded labeling
+- Semi-automated 3D mask preparation using color-coded labeling
 - Slice-wise watershed segmentation for artifact removal
 - Custom batch-wise thresholding for bone isolation
 - 2D-to-3D DenseNet121 model conversion (PyTorch-based)
@@ -40,23 +40,23 @@ This project implements a comprehensive pipeline for 3D knee CT image segmentati
 bone_analysis/
 ├── utils/
 │   ├── segmentation.py                     # Segmentation & 3D rendering
-│   ├── mask_generation.py                  # Expansion and randomization
-│   ├── model_conversion.py                 # Landmark extraction
-│   ├── feature_extraction.py               # Landmark extraction
-│   ├── feature_comparison.py               # Landmark extraction
-│   └── plots.py                            # 2D & 3D visualization helpers
+│   ├── mask_generation.py                  # Generate Bone & Background Mask
+│   ├── model_conversion.py                 # Convert 2D Pretrained Model to 3D
+│   ├── feature_extraction.py               # Extract N-dimensional feature vector
+│   ├── feature_comparison.py               # Compare regions for different features
+│   └── plots.py                            # 3D visualization helpers
 ├── datasets/
-│   ├── 3702_left_knee.nii.gz               # Original Dataset
-│   ├── 3702_left_knee_bone_mask.nii.gz     # Bone mask volume
-│   └── 3702_left_knee_bg_mask.nii.gz       # Background mask volume
+│   ├── 3702_left_knee.nii.gz               # Original Knee CT Scan volume
+│   ├── 3702_left_knee_bone_mask.nii.gz     # Generated Bone Mask volume
+│   └── 3702_left_knee_bg_mask.nii.gz       # Generated Background Mask volume
 ├── notebooks/
 │   └── notebook.ipynb                      # Interactive Jupyter notebook
 ├── results/
-│   └── cosine_similarity.csv               # Cosine simialrity results
+│   └── cosine_similarity.csv               # Cosine Simialrity Values
 ├── images/
 │   ├── mask.png                            # Batch of generated masks
-│   ├── cosine_sim.png                      # Dataframe Image of cosine similarity 
-│   ├── seg_100                             # Segmentation result of slice 100
+│   ├── cosine_sim.png                      # Dataframe Image of Cosine Similarity 
+│   ├── seg_100/png                         # Segmentation result of slice 100
 │   └── seg_110.png                         # Segmentation result of slice 110
 ├── docs/
 │   └── report.pdf                          # Methodology report
@@ -120,12 +120,13 @@ from segmentation import watershed_segmentation, create_tensor
 
 labels = watershed_segmentation(volume_3d)
 
-tensor_3d = create_tensor(bg_mask, labels, "background")
+tensor_3d = create_tensor(bg_mask, labels, "tibia_3d")
 # Returns: tibia (green), femur (red), background (gray)
 ```
 
 ### 2. Model Conversion
 ```python
+from torchvision import models
 # Convert 2D DenseNet121 to 3D
 from model_conversion import convert_densenet121
 
@@ -146,13 +147,13 @@ features = extract_gap_features(model_3d, tensor_3d, layers)
 ### 4. Feature Comparision
 ```python
 # Compute cosine similarities
-from feature_comparision import create_similarity_comparision_data, save_similarity_results
+from feature_comparision import create_similarity_comparison_data, save_similarity_results
 
-comparision_data = create_similarity_comparision_data(
+comparison_data = create_similarity_comparison_data(
   feature_lookup, region_pairs, layer_mapping
 )
 
-similarities = save_similarity_results(comparision_data, output_path)
+similarities = save_similarity_results(comparison_data, output_path)
 # Saves results to CSV file
 ```
 
@@ -185,7 +186,7 @@ The pipeline generates:
 
 **Feature Extraction**
 - Hook Mechanisms Captures intermediate representations during forward pass
-- Global average pooling converts feature maps to fixed dimension vectors
+- Global average pooling converts feature maps to fixed N-dimensional vectors
 
 ---
 
@@ -193,12 +194,12 @@ The pipeline generates:
 
 - Run the desired Python module directly from the command line.
 - This will display one output at a time:
-  - Segmentation: Apply segmentation and create a colorful mask.
+  - Segmentation: Use segmentation to create a colorful mask.
   - Mask Generation: Creates grayscale masks for the femur, tibia, and the background.
-  - Model Conversion: Prepare a 3D version of pretrained densenet121 model.
+  - Model Conversion: Create a 3D version of the 2D pretrained densenet121 model.
   - Feature Extraction: Convert the model's feature maps into an N-dimensional vector.
   - Feature Comparision: Analyze the similarities of the anatomical regions.
-  - Plots: Visualizes the segmentation result.
+  - Plots: Visualizes the segmentation results.
 
 ---
 
