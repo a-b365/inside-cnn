@@ -158,14 +158,19 @@ similarities = save_similarity_results(comparision_data, output_path)
 
 The pipeline generates:
 - **Segmented 3D volumes** with color-coded anatomical regions
-![Segmentation of slice 100](images/seg_100.png) ![Segmentation of slice 110](images/seg_110.png)
+
+<div style="display: flex; gap: 10px;">
+  <img src="images/seg_100.png" width="300"/>
+  <img src="images/seg_110.png" width="300"/>
+</div>
+
 - **Feature vectors** from multiple abstraction levels
 - **Similarity matrix** (CSV format) containing:
   - Tibia vs. Femur similarity scores
   - Tibia vs. Background similarity scores  
   - Femur vs. Background similarity scores
-![Cosine Similarity](images/cosine_sim.png)
 
+![Cosine Similarity](images/cosine_sim.png)
 ---
 
 ## Methodology
