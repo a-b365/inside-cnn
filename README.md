@@ -1,188 +1,211 @@
-# 3D Knee CT Segmentation and Feature Analysis
-
-A comprehensive pipeline for 3D knee CT image segmentation and deep learning-based feature similarity analysis using a modified DenseNet121 architecture.
+# Knee Feature Extraction and Similarity Comparison
 
 ## 🔬 Overview
 
-This project implements an end-to-end solution for analyzing 3D knee CT scans through automated segmentation and feature extraction. The pipeline identifies and analyzes three key anatomical regions (tibia, femur, and background) using advanced image processing techniques combined with deep learning approaches.
+This project implements a comprehensive pipeline for 3D knee CT image segmentation to identify and analyze three key anatomical regions (tibia, femur, and background) using a modified DenseNet121 architecture followed by cosine similarity analysis.
+
+---
 
 ## ✨ Key Features
 
-- **3D Medical Image Segmentation**: Semi-automated segmentation of knee CT scans into anatomical regions
-- **2D-to-3D Model Conversion**: Adaptation of pretrained DenseNet121 for 3D volumetric data
-- **Multi-Scale Feature Extraction**: Feature extraction from multiple convolutional layers
+- **Segmentation**: Semi-automated mask generation of knee CT scan and colorful splitting
+- **Model Conversion**: Adaptation of 2D pretrained DenseNet121 for 3D volumetric data
+- **Feature Extraction**: Feature extraction from final few convolutional layers
 - **Similarity Analysis**: Cosine similarity computation between anatomical regions
-- **Robust Processing Pipeline**: Handles variable anatomical structures and artifacts
 
-## 🏗️ Architecture
+---
 
-### Segmentation Pipeline
+## Technical Approach
+
+**Core Methods:**
+- Semi-automated 3D mask preparation with color-coded labeling
+- Slice-wise watershed segmentation for artifact removal
+- Custom batch-wise thresholding for bone isolation
+- 2D-to-3D DenseNet121 model conversion (PyTorch-based)
+- Forward hook-based multi-layer deep feature extraction
+- Global average pooling for feature vector generation
+- Cosine similarity computation for inter-region comparison
+
+**Stack:**
+- Deep Learning: `torch`, `torchvision`
+- Image Processing: `scikit-image`, `scipy`, `opencv`, `nibabel`
+- Visualization: `matplotlib`, `mayavi`
+- Data Handling: `numpy`, `pandas`
+
+---
+
+## 📝 Project Structure
+
 ```
-3D CT Input → Semi-Automated Processing → Watershed Algorithm → Batch Processing → Color-Coded Regions
+bone_analysis/
+├── utils/
+│   ├── segmentation.py           # Segmentation & 3D rendering
+│   ├── mask_generation.py     # Expansion and randomization
+│   ├── model_conversion.py     # Landmark extraction
+│   ├── feature_extraction.py     # Landmark extraction
+│   ├── feature_comparison.py     # Landmark extraction
+│   └── plots.py                  # 2D & 3D visualization helpers
+├── notebooks/
+│   └── notebook.ipynb            # Interactive Jupyter notebook
+├── results/
+│   └── cosine_similarity.csv     # Cosine simialrity results
+├── images/
+│   ├── mask.png                  # Batch of generated masks
+│   ├── cosine_sim.png            # Dataframe Image of cosine similarity 
+│   ├── seg_100                   # Segmentation result of slice 100
+│   └── seg_110.png               # Segmentation result of slice 110
+├── docs/
+│   └── report.pdf                # Methodology report
+├── requirements.txt              # Python dependencies
+├── env.ps1                       # Windows setup script
+└── readme.md                     # Project overview and instructions
 ```
 
-### Feature Extraction
-```
-3D Regions → 3D DenseNet121 → Multi-Layer Hooks → Global Average Pooling → Feature Vectors
-```
+---
 
-### Analysis
-```
-Feature Vectors → Cosine Similarity → CSV Output
-```
+## 🚀 Setup Instructions
 
-## 📋 Requirements
+### 🔧 Prerequisites
 
 - Python 3.8+
-- PyTorch
-- OpenCV
-- NumPy
-- SciPy
-- scikit-image
-- Pandas
+- Git (to clone the repo)
+- PowerShell (for Windows users)
 
-## 🚀 Installation
+### 💻 Installation
 
-```bash
-git clone https://github.com/yourusername/3d-knee-ct-analysis.git
-cd 3d-knee-ct-analysis
-pip install -r requirements.txt
-```
+1. Clone the repository
+
+    ```bash
+    git clone https://github.com/a-b365/inside-cnn.git
+    cd inside-cnn
+    ```
+
+2. Run the powershell script to add the environment variables:
+
+    ```powershell
+    .\env.ps1
+    ```
+
+3. Create and activate a virtual environment:
+
+  - On macOS/Linux:
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate
+    ```
+
+  - On Windows:
+    ```powershell
+    .\.venv\Scripts\activate
+    ```
+
+4. Install Dependencies
+
+    Run:
+    ```
+    pip install -r requirements.txt
+    ```
+---
 
 ## 💻 Usage
 
-### 1. Image Segmentation
+### 1. Segmentation-Based Splitting
 ```python
 # Segment 3D CT into anatomical regions
-from segmentation import segment_knee_ct
+from segmentation import watershed_segmentation, create_tensor
 
-regions = segment_knee_ct(ct_volume)
+labels = watershed_segmentation(volume_3d)
+
+tensor_3d = create_tensor(bg_mask, labels, "background")
 # Returns: tibia (green), femur (red), background (gray)
 ```
 
 ### 2. Model Conversion
 ```python
 # Convert 2D DenseNet121 to 3D
-from model_converter import convert_2d_to_3d
+from model_conversion import convert_densenet121
 
-model_3d = convert_2d_to_3d('densenet121')
+model_2d = models.densenet121(pretrained=True)
+
+model_3d = convert_densenet121(model_2d)
 ```
 
 ### 3. Feature Extraction
 ```python
 # Extract features from multiple layers
-from feature_extractor import extract_features
+from feature_extraction import extract_gap_features
 
-features = extract_features(model_3d, regions)
+features = extract_gap_features(model_3d, tensor_3d, layers)
 # Returns: features from last, 3rd-last, 5th-last layers
 ```
 
-### 4. Similarity Analysis
+### 4. Feature Comparision
 ```python
 # Compute cosine similarities
-from similarity_analysis import compute_similarities
+from feature_comparision import create_similarity_comparision_data, save_similarity_results
 
-similarities = compute_similarities(features)
+comparision_data = create_similarity_comparision_data(
+  feature_lookup, region_pairs, layer_mapping
+)
+
+similarities = save_similarity_results(comparision_data, output_path)
 # Saves results to CSV file
 ```
+
+---
 
 ## 📊 Output
 
 The pipeline generates:
 - **Segmented 3D volumes** with color-coded anatomical regions
+![Segmentation of slice 100](images/seg_100.png) ![Segmentation of slice 110](images/seg_110.png)
 - **Feature vectors** from multiple abstraction levels
 - **Similarity matrix** (CSV format) containing:
   - Tibia vs. Femur similarity scores
   - Tibia vs. Background similarity scores  
   - Femur vs. Background similarity scores
-
-## 🔧 Technical Details
-
-### Segmentation Strategy
-- **Semi-automated approach**: Combines algorithmic processing with visual inspection
-- **Watershed algorithm**: Separates connected blob artifacts
-- **Batch processing**: Adaptive thresholding for variable anatomical structures
-- **Color coding**: Systematic region labeling (Green=Tibia, Red=Femur, Gray=Background)
-
-### Model Architecture
-- **Base model**: DenseNet121 (pretrained on ImageNet)
-- **Conversion process**: 
-  - 2D → 3D parameter mapping
-  - Weight replication along depth dimension
-  - Normalization by depth factor
-  - 3D kernel/stride/padding configuration
-
-### Feature Extraction
-- **Multi-layer extraction**: Last, 3rd-last, 5th-last convolutional layers
-- **Hook mechanism**: Captures intermediate representations during forward pass
-- **Global average pooling**: Converts feature maps to fixed-size vectors
-- **Three abstraction levels**: Low, mid, and high-level features
-
-## 📈 Results
-
-The pipeline provides quantitative similarity metrics across:
-- **Region pairs**: All combinations of tibia, femur, and background
-- **Feature levels**: Low-level textures to high-level semantic features
-- **Volumetric analysis**: Full 3D structural comparison
-
-## 🛠️ Customization
-
-### Adjusting Segmentation Parameters
-```python
-# Modify watershed and thresholding parameters
-config = {
-    'min_size_threshold': 100,
-    'watershed_markers': 'auto',
-    'batch_size': 10
-}
-```
-
-### Adding New Feature Layers
-```python
-# Extract from additional layers
-layer_indices = ['last', '3rd_last', '5th_last', '7th_last']
-```
-
-## 📝 File Structure
-
-```
-3d-knee-ct-analysis/
-├── src/
-│   ├── segmentation.py          # CT segmentation pipeline
-│   ├── model_converter.py       # 2D to 3D model conversion
-│   ├── feature_extractor.py     # Multi-layer feature extraction
-│   └── similarity_analysis.py   # Cosine similarity computation
-├── data/
-│   ├── input/                   # Raw CT scans
-│   └── output/                  # Processed results
-├── results/
-│   └── similarity_scores.csv    # Analysis results
-├── requirements.txt
-└── README.md
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/improvement`)
-3. Commit changes (`git commit -am 'Add new feature'`)
-4. Push to branch (`git push origin feature/improvement`)
-5. Create Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-For questions or collaboration opportunities, please open an issue or contact [your-email@example.com].
-
-## 🙏 Acknowledgments
-
-- PyTorch team for the pretrained DenseNet121 model
-- Medical imaging community for CT processing techniques
-- Contributors to scikit-image and OpenCV libraries
+![Cosine Similarity](images/cosine_sim.png)
 
 ---
 
-**Note**: This pipeline is designed for research purposes. Clinical applications require additional validation and regulatory approval.
+## Methodology
+
+**Semi-automated Segmentation Strategy**
+- Combines algorithmic processing with visual inspection
+- Separates connected blob artifacts
+- Batch-wise thresholding and noise removal for variable anatomical structures
+- Systematic region labeling (Green=Tibia, Red=Femur, Gray=Background)
+
+**Conversion process**: 
+- 2D → 3D parameter mapping
+- Weight replication along depth dimension
+- Normalization by depth factor
+- 3D kernel/stride/padding configuration
+
+**Feature Extraction**
+- Hook Mechanisms Captures intermediate representations during forward pass
+- Global average pooling converts feature maps to fixed dimension vectors
+
+---
+
+## Usage
+
+- Run the desired Python module directly from the command line.
+- This will display one output at a time:
+  - Segmentation: Apply segmentation and create a colorful mask.
+  - Mask Generation: Creates grayscale masks for the femur, tibia, and the background.
+  - Model Conversion: Prepare a 3D version of pretrained densenet121 model.
+  - Feature Extraction: Convert the model's feature maps into an N-dimensional vector.
+  - Feature Comparision: Analyze the similarities of the anatomical regions.
+  - Plots: Visualizes the segmentation result.
+
+---
+
+## Notes
+
+  - A detailed project report is available in the docs/ folder
+  - Run the Jupyter notebook inside the notebooks/ folder for an interactive walkthrough of the implementation
+  - Visual outputs and intermediate results can be found in the images/ directory.
+
+---
+
