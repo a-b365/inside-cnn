@@ -86,7 +86,7 @@ def watershed_segmentation(volume_3d: np.ndarray,
     
     return labels
 
-def create_tensor(bg_mask:np.ndarray, labels: np.ndarray, name: str = None) -> torch.Tensor:
+def create_tensor(bg_mask:np.ndarray, labels: np.ndarray, name: str = "tensor_3d") -> torch.Tensor:
     """
     
     Create a 3D tensor that contains RGB color information for labels.
@@ -193,10 +193,19 @@ def main() -> None:
         print("Performing watershed segmentation...")
         labels = watershed_segmentation(volume_3d)
 
-        # Create a PyTorch Tensor object
-        print("Creating and saving a Tensor...")
-        tensor_3d = create_tensor(bg_mask, labels, "background")
-        torch.save(tensor_3d, os.environ.get("STORE_LOCATION")+"background_3d.pth")
+        # Define region types for tensor creation and storage
+        regions = ["tibia", "femur", "background", "tensor"]
+
+        # Create and save PyTorch tensor objects for each anatomical region
+        for region in regions:
+            print(f"Creating and saving the {region}_3d.pth tensor")
+            
+            # Generate 3D tensor for current region
+            tensor_3d = create_tensor(bg_mask, labels, region)
+            
+            # Construct output filepath and save tensor
+            output_path = os.environ.get("STORE_LOCATION") + f"{region}_3d.pth"
+            torch.save(tensor_3d, output_path)
 
         # Display results
         num_segments = np.max(labels)

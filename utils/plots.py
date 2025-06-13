@@ -2,8 +2,7 @@
 Visualization Module
 
 This module provides visualization functions for medical image analysis tasks
-including contour plotting, distance transforms, mask expansions, segmentation
-results, and landmark detection visualization.
+including segmentation results.
 
 Author: Amir Bhattarai
 Date: June 06, 2025
@@ -15,7 +14,6 @@ from typing import List, Tuple, Union
 
 # Third-party imports
 import numpy as np
-import matplotlib.pyplot as plt
 from mayavi import mlab
 
 def visualize_segments(labels: np.ndarray) -> None:
