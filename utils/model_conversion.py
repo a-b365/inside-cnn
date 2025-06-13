@@ -1,7 +1,7 @@
 """
 Model Inflation Pipeline
 
-This module provides utilities to convert 2D PyTorch models to their 3D counterparts
+This module provides utilities to convert 2D Densenet121 to their 3D counterparts
 by "inflating" 2D layers (Conv2d, BatchNorm2d, etc.) to 3D equivalents (Conv3d, 
 BatchNorm3d, etc.). This is particularly useful for medical image analysis where
 volumetric data processing is required.
@@ -228,7 +228,7 @@ def main() -> None:
         )
     
     # Create full save path
-    save_path = os.path.join(store_location, "densenet121_3d.pth")
+    save_path = os.path.join(store_location, "model_3d.pth")
     
     # Save the converted model
     save_model(model_3d, save_path)

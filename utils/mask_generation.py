@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
 """
 Mask Generation Pipeline
 
-This module provides a comprehensive pipeline for segmenting knee structures from
-CT or MRI volumes. The segmentation process uses thresholding, morphological
+This module provides a comprehensive pipeline for segmenting knee region from
+CT volumes. The segmentation process uses thresholding, morphological
 operations, and watershed segmentation to create accurate binary masks.
 
 The pipeline is specifically designed for knee anatomy and uses different parameters

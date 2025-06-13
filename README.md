@@ -1,12 +1,12 @@
 # Knee Feature Extraction and Similarity Comparison
 
-## 🔬 Overview
+## Overview
 
 This project implements a comprehensive pipeline for 3D knee CT image segmentation to identify and analyze three key anatomical regions (tibia, femur, and background) using a modified DenseNet121 architecture followed by cosine similarity analysis.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 - **Segmentation**: Semi-automated mask generation of knee CT scan and colorful splitting
 - **Model Conversion**: Adaptation of 2D pretrained DenseNet121 for 3D volumetric data
@@ -34,31 +34,35 @@ This project implements a comprehensive pipeline for 3D knee CT image segmentati
 
 ---
 
-## 📝 Project Structure
+## Project Structure
 
 ```
 bone_analysis/
 ├── utils/
-│   ├── segmentation.py           # Segmentation & 3D rendering
-│   ├── mask_generation.py     # Expansion and randomization
-│   ├── model_conversion.py     # Landmark extraction
-│   ├── feature_extraction.py     # Landmark extraction
-│   ├── feature_comparison.py     # Landmark extraction
-│   └── plots.py                  # 2D & 3D visualization helpers
+│   ├── segmentation.py                     # Segmentation & 3D rendering
+│   ├── mask_generation.py                  # Expansion and randomization
+│   ├── model_conversion.py                 # Landmark extraction
+│   ├── feature_extraction.py               # Landmark extraction
+│   ├── feature_comparison.py               # Landmark extraction
+│   └── plots.py                            # 2D & 3D visualization helpers
+├── datasets/
+│   ├── 3702_left_knee.nii.gz               # Original Dataset
+│   ├── 3702_left_knee_bone_mask.nii.gz     # Bone mask volume
+│   └── 3702_left_knee_bg_mask.nii.gz       # Background mask volume
 ├── notebooks/
-│   └── notebook.ipynb            # Interactive Jupyter notebook
+│   └── notebook.ipynb                      # Interactive Jupyter notebook
 ├── results/
-│   └── cosine_similarity.csv     # Cosine simialrity results
+│   └── cosine_similarity.csv               # Cosine simialrity results
 ├── images/
-│   ├── mask.png                  # Batch of generated masks
-│   ├── cosine_sim.png            # Dataframe Image of cosine similarity 
-│   ├── seg_100                   # Segmentation result of slice 100
-│   └── seg_110.png               # Segmentation result of slice 110
+│   ├── mask.png                            # Batch of generated masks
+│   ├── cosine_sim.png                      # Dataframe Image of cosine similarity 
+│   ├── seg_100                             # Segmentation result of slice 100
+│   └── seg_110.png                         # Segmentation result of slice 110
 ├── docs/
-│   └── report.pdf                # Methodology report
-├── requirements.txt              # Python dependencies
-├── env.ps1                       # Windows setup script
-└── readme.md                     # Project overview and instructions
+│   └── report.pdf                          # Methodology report
+├── requirements.txt                        # Python dependencies
+├── env.ps1                                 # Windows setup script
+└── readme.md                               # Project overview and instructions
 ```
 
 ---
@@ -107,7 +111,7 @@ bone_analysis/
     ```
 ---
 
-## 💻 Usage
+## Example Usage
 
 ### 1. Segmentation-Based Splitting
 ```python
@@ -163,7 +167,6 @@ The pipeline generates:
   - Tibia vs. Femur similarity scores
   - Tibia vs. Background similarity scores  
   - Femur vs. Background similarity scores
-  
 ---
 
 ## Methodology

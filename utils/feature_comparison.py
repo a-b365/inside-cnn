@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Feature Comparison Module for Medical Image Analysis
+Feature Comparison Module for Different Knee Regions
 
 This module provides functionality for comparing extracted features from different
 anatomical regions using cosine similarity. It's designed for analyzing relationships

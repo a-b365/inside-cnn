@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Feature Extraction Module for Medical Image Analysis
+Feature Extraction Module for Different Knee Regions
 
 This module provides utilities for extracting deep features from 3D neural network models
 using forward hooks. It's specifically designed for medical image analysis where feature

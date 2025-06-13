@@ -1,7 +1,7 @@
 """
-Visualization Module
+3D Visualization Module
 
-This module provides visualization functions for medical image analysis tasks
+This module provides 3D visualization functions for medical image analysis tasks
 including segmentation results.
 
 Author: Amir Bhattarai
